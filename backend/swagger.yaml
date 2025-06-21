@@ -1,0 +1,157 @@
+openapi: 3.0.2
+info:
+  title: Seminar Hall Booking API
+  version: 1.0.0
+  description: API for managing seminar hall bookings
+
+paths:
+  /api/auth/signup:
+    post:
+      summary: Sign up a pre-approved user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: JWT token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '403':
+          description: Not pre-approved
+
+  /api/auth/login:
+    post:
+      summary: Log in user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: JWT token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':
+          description: Invalid credentials
+
+  /api/bookings:
+    post:
+      summary: Create a booking (club_leader or faculty)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, date, startTime, endTime, termsAccepted]
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                date:
+                  type: string
+                  format: date
+                startTime:
+                  type: string
+                endTime:
+                  type: string
+                termsAccepted:
+                  type: boolean
+      responses:
+        '200':
+          description: Booking created
+        '400':
+          description: Conflict or invalid input
+
+    get:
+      summary: Get user's bookings
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of bookings
+
+  /api/bookings/public:
+    get:
+      summary: Get approved bookings for public calendar
+      responses:
+        '200':
+          description: List of approved bookings
+
+  /api/admin/bookings:
+    get:
+      summary: Get pending bookings (admin only)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of pending bookings
+
+  /api/admin/bookings/{id}:
+    patch:
+      summary: Approve or reject a booking (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [pending, approved, rejected]
+                comments:
+                  type: string
+      responses:
+        '200':
+          description: Booking updated
+        '404':
+          description: Booking not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
