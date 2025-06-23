@@ -11,7 +11,7 @@ router.post('/signup', async (req, res) => {
   try {
     // Check if email is pre-approved
     const preapproved = await pool.query(
-      'SELECT * FROM PreapprovedUsers WHERE email = $1',
+      'SELECT * FROM preapproved_users WHERE email = $1',
       [email]
     );
     if (preapproved.rows.length === 0) {
@@ -19,7 +19,7 @@ router.post('/signup', async (req, res) => {
     }
 
     // Check if user already exists
-    const existingUser = await pool.query('SELECT * FROM Users WHERE email = $1', [email]);
+    const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (existingUser.rows.length > 0) {
       return res.status(400).json({ message: 'User already exists' });
     }
@@ -29,9 +29,10 @@ router.post('/signup', async (req, res) => {
 
     // Insert new user with pre-approved role
     const user = await pool.query(
-      'INSERT INTO Users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *',
-      [name, email, hashedPassword, preapproved.rows[0].role]
-    );
+  'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *',
+  [name, email, hashedPassword, preapproved.rows[0].role]
+);
+
 
     // Generate JWT
     const token = jwt.sign(
@@ -53,7 +54,7 @@ router.post('/login', async (req, res) => {
 
   try {
     // Find user by email
-    const user = await pool.query('SELECT * FROM Users WHERE email = $1', [email]);
+    const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (user.rows.length === 0) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
