@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+// src/components/Signup.js
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../api';
 
 // Signup form component
-const Signup = () => {
+// It now accepts onSignupSuccess as a prop (same as onLoginSuccess from App.js)
+const Signup = ({ onSignupSuccess }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,10 +15,11 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Attempt signup and store token
       const response = await signup({ name, email, password });
-      localStorage.setItem('token', response.data.token);
-      navigate('/booking');
+      // Assuming signup endpoint also returns a token and role,
+      // call onSignupSuccess to update App.js state
+      onSignupSuccess(response.data.token, response.data.role); // Pass token and role
+      navigate('/booking'); // Redirect to booking page after successful signup
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed');
     }

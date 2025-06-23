@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createBooking } from '../api';
 
@@ -25,7 +25,7 @@ const BookingForm = () => {
         endTime,
         termsAccepted,
       });
-      navigate('/booking');
+      navigate('/Thankyou');
     } catch (err) {
       setError(err.response?.data?.message || 'Booking failed');
     }

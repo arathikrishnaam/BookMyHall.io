@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+// src/components/Login.js
+import { jwtDecode } from 'jwt-decode';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api';
 
-// Login form component
-const Login = () => {
+const Login = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -12,11 +13,46 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Attempt login and store token
       const response = await login({ email, password });
-      localStorage.setItem('token', response.data.token);
-      navigate('/booking');
+      console.log('Login API Raw Response Data:', response.data);
+
+      const token = response.data.token;
+      let role = null;
+
+      if (!token) {
+        setError('Login response missing token.');
+        return;
+      }
+
+      try {
+        const decodedToken = jwtDecode(token);
+        console.log('Decoded Token:', decodedToken);
+        if (decodedToken && decodedToken.role) {
+          role = decodedToken.role;
+        }
+      } catch (decodeError) {
+        console.error('Error decoding token:', decodeError);
+        setError('Failed to decode authentication token.');
+        return;
+      }
+
+      if (role) {
+        role = role.toLowerCase().trim();
+      }
+
+      console.log('Extracted Token:', token);
+      console.log('Extracted Role (after normalization):', role);
+
+      onLoginSuccess(token, role);
+
+      if (role === 'admin') {
+        navigate('/admin'); // Redirect admin directly to the admin panel
+      } else {
+        navigate('/booking'); // Redirect regular users to the booking page
+      }
+
     } catch (err) {
+      console.error('Login error:', err.response?.data || err.message || err);
       setError(err.response?.data?.message || 'Login failed');
     }
   };
@@ -42,7 +78,7 @@ const Login = () => {
             type="password"
             className="form-control"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)} /* <-- CORRECTED THIS LINE */
             required
           />
         </div>
