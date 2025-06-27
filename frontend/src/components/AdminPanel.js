@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getPendingBookings, updateBooking } from '../api';
 
 // Admin panel to manage pending bookings
@@ -23,6 +23,7 @@ const AdminPanel = () => {
   const handleAction = async (id, status, comments = '') => {
     try {
       await updateBooking(id, { status, comments });
+      // Remove the booking from the list after successful action
       setBookings(bookings.filter((booking) => booking.id !== id));
     } catch (err) {
       setError('Action failed');
@@ -46,8 +47,14 @@ const AdminPanel = () => {
           {bookings.map((booking) => (
             <tr key={booking.id}>
               <td>{booking.title}</td>
-              <td>{booking.date}</td>
-              <td>{`${booking.startTime} - ${booking.endTime}`}</td>
+              {/* Optional: Format the date more readably if needed, e.g., toLocaleDateString() */}
+              <td>{booking.date.substring(0, 10)}</td> {/* Shows YYYY-MM-DD */}
+              {/* FIX: Use snake_case to match database column names */}
+              <td>
+                {/* Ensure existence before substring to prevent errors if data is missing */}
+                {booking.start_time ? booking.start_time.substring(0, 5) : 'N/A'} - {/* Format HH:MM */}
+                {booking.end_time ? booking.end_time.substring(0, 5) : 'N/A'}    {/* Format HH:MM */}
+              </td>
               <td>
                 <button
                   className="btn btn-success me-2"
@@ -61,7 +68,7 @@ const AdminPanel = () => {
                     handleAction(
                       booking.id,
                       'rejected',
-                      prompt('Enter rejection comments:') || ''
+                      prompt('Enter rejection comments (optional):') || ''
                     )
                   }
                 >
@@ -72,6 +79,9 @@ const AdminPanel = () => {
           ))}
         </tbody>
       </table>
+      {bookings.length === 0 && !error && (
+        <p className="text-center mt-3">No pending bookings to display.</p>
+      )}
     </div>
   );
 };

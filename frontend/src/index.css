@@ -1,11 +1,359 @@
+
+/* ===== Base Reset ===== */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f0f4ff;
+  color: #333;
 }
 
-.container {
-  padding: 20px;
+/* ===== NAVBAR Styling ===== */
+.navbar {
+  background-color: #00008B !important;
+  padding: 0.8rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+  color: #ffffff !important;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-brand:hover {
+  color: #d1d1ff !important;
+}
+
+.navbar .btn {
+  color: #ffffff;
+  background-color: transparent;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  padding: 5px 12px;
+  margin-left: 10px;
+  transition: all 0.3s ease;
+}
+
+.navbar .btn:hover {
+  background-color: #ffffff;
+  color: #00008B;
+}
+
+/* ===== Logo + Title (Calendar Page Only) ===== */
+.container::before {
+  content: "";
+  display: block;
+  height: 150px;
+  background-color: white;
+  background-image: url("https://lbscentre.kerala.gov.in/lbsitw/images/lbsitw_logo.png");
+
+  background-repeat: no-repeat;
+  background-position: center 10px;
+  background-size: 800px;
+  margin-bottom: 0;
+}
+
+.container::after {
+  content: "© 2025 Seminar Hall Booking System | Developed for LBSITW";
+
+  display: block;
+  text-align: center;
+  background-color: white;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #00008B;
+  font-family: 'Segoe UI', sans-serif;
+  letter-spacing: 0.5px;
+  margin-top: -10px;
+  padding-bottom: 20px;
+}
+
+/* Hide logo + tagline on Login, Signup, Admin, etc. */
+.container:has(form)::before,
+.container:has(form)::after,
+.container:has(label)::before,
+.container:has(label)::after,
+.container:has(.alert-warning)::before,
+.container:has(.alert-warning)::after,
+.container:has(.table)::before,
+.container:has(.table)::after {
+  display: none !important;
+}
+
+/* ===== Login Page Styling ===== */
+form {
+  max-width: 420px;
+  margin: 60px auto;
+  padding: 2.5rem 2rem 3rem;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+form h3 {
+  text-align: center;
+  color: #00008B;
+  font-weight: 700;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  letter-spacing: 1px;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', sans-serif;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #00008B;
+  margin-bottom: 5px;
+  display: block;
+  font-size: 1rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #ccc;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #00008B;
+  box-shadow: 0 0 0 3px rgba(0, 0, 139, 0.1);
+  outline: none;
+}
+
+.btn-primary {
+  background-color: #FA8128 !important;
+  border: none;
+  width: 100%;
+  padding: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  transition: 0.3s ease;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #e97114 !important;
+  transform: translateY(-1px);
+}
+
+.alert-danger {
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  text-align: center;
+  background-color: #ffe5e5;
+  color: #b10000;
+}
+
+@media (max-width: 480px) {
+  form {
+    margin: 40px 20px;
+    padding: 2rem 1.2rem;
+  }
+}
+
+/* Login Heading */
+h3 {
+  text-align: center;
+  color: #00008B;
+  font-weight: 800;
+  font-size: 2.2rem;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  letter-spacing: 1px;
+}
+
+/* ===== Booking Form ===== */
+.booking-form form {
+  max-width: 700px;
+  margin: 60px auto;
+  padding: 40px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  border-left: 10px solid #00008B;
+  box-shadow: 0 10px 30px rgba(0, 0, 139, 0.1);
+  font-family: 'Roboto', sans-serif;
+}
+
+.booking-form form h3 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 25px;
+  color: #00008B;
+}
+
+/* ===== Admin Panel Styling ===== */
+.mt-5:has(.table) {
+  max-width: 1000px;
+  margin: 3rem auto;
+  padding: 2rem 2rem;
+  background-color: #ffffff;
+  border-left: 12px solid #FA8128;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.mt-5 h3 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #00008B;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #00008B;
+  padding-bottom: 10px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.table thead {
+  background-color: #00008B;
+  color: white;
+}
+
+.table th, .table td {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+.table tbody tr:hover {
+  background-color: #f2f8ff;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+}
+
+/* ===== FullCalendar Styling ===== */
+.fc-event,
+.fc-event-dot {
+  background-color: #e63946 !important; /* Red events */
+  border: none !important;
+  color: #fff !important;
+  font-weight: 500;
+  border-radius: 6px !important;
+  padding: 2px 4px !important;
+}
+
+.fc-button {
+  background-color: #6495ED !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 600;
+  padding: 5px 12px !important;
+  margin: 2px !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease;
+}
+
+.fc-button:hover {
+  background-color: #407fdd !important;
+}
+
+.fc-button-active {
+  background-color: #3a6fd8 !important;
+}
+
+.fc-toolbar-title {
+  color: #00008B;
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-top: 10px;
+}
+
+/* Responsive Calendar */
+@media (max-width: 768px) {
+  .fc-toolbar-title {
+    font-size: 1rem !important;
+  }
+
+  .fc-button {
+    font-size: 0.8rem !important;
+    padding: 4px 8px !important;
+  }
+}
+/* Style the Thank You container */
+.mt-5.text-center {
+  background: linear-gradient(to right, #f0f8ff, #ffffff);
+  padding: 40px;
+  border-radius: 20px;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+/* Style the heading */
+.mt-5.text-center h2 {
+  font-size: 2.5rem;
+  color: #0a0a45;
+  font-weight: bold;
+  text-shadow: 2px 2px #b3cde0;
+}
+
+/* Style the paragraph */
+.mt-5.text-center p {
+  font-size: 1.2rem;
+  color: #444;
+  margin-top: 10px;
+}
+
+/* Style the button */
+.mt-5.text-center .btn {
+  background-color: #00008B;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.mt-5.text-center .btn:hover {
+  background-color: #001a66;
 }
