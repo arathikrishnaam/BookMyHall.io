@@ -1,16 +1,16 @@
-# Book My Hall
+## Book My Hall
 
-A comprehensive web application designed to streamline hall bookings for educational institutions, eliminating manual paperwork and reducing administrative overhead.
+If you've ever tried to book a hall at a college or university, you know the pain. Paperwork, phone calls, waiting for approvals, and inevitably someone else books your time slot while you're still filling out forms. We built Book My Hall to fix this mess.
 
-## Purpose
+## What This Does
 
-This system digitizes the hall booking process, allowing faculty and club leaders to request bookings online while providing administrators with an efficient approval workflow. The public calendar ensures transparency and prevents scheduling conflicts.
+Book My Hall lets faculty and club leaders book halls online instead of dealing with paper forms. Administrators get a clean dashboard to approve or reject requests, and everyone can see what's already booked on a public calendar. No more double bookings, no more confusion.
 
 ## Features
 
 - **User Authentication**: Secure login/signup system with role-based access control
-- **Pre-approved Users**: Only authorized faculty and club leaders can make bookings
-- **Smart Conflict Detection**: Automatic checking with 60-minute buffer between bookings
+- **Pre-approved Users**: Only authorised faculty and club leaders can make bookings
+- **Smart Conflict Detection**: Automatic checking with a 60-minute buffer between bookings
 - **Admin Dashboard**: Streamlined approval/rejection workflow for administrators
 - **Public Calendar**: Real-time view of approved bookings using FullCalendar
 - **Responsive Design**: Mobile-friendly interface using Bootstrap
