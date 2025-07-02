@@ -1,105 +1,201 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createBooking } from '../api';
+import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap components
+import { useNavigate } from 'react-router-dom'; // Assuming you use react-router-dom
+import { createBooking } from '../api'; // Your API service for booking
 
-// Booking form component
+// Import the terms content from the new dedicated file
+import { TERMS_AND_CONDITIONS_CONTENT } from '../constants/termsAndConditions'; // Adjust path if your 'constants' folder is elsewhere
+
 const BookingForm = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false); // State for the main form checkbox
   const [error, setError] = useState('');
+
+  // States for the modal
+  const [showTermsModal, setShowTermsModal] = useState(false); // Controls modal visibility
+  const [modalTermsAccepted, setModalTermsAccepted] = useState(false); // State for checkbox INSIDE the modal
+  const [modalError, setModalError] = useState(''); // Error message for modal validation
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); // Clear previous errors
+
+    // Client-side validation: Check if terms are accepted before sending
+    if (!termsAccepted) {
+      setError('You must accept the terms and conditions to submit the booking.');
+      return; // Prevent form submission
+    }
+    if (!title || !date || !startTime || !endTime) {
+      setError('Please fill in all required fields: Title, Date, Start Time, End Time.');
+      return;
+    }
+
+    // Basic time validation (more robust validation happens on the backend)
+    if (startTime && endTime && startTime >= endTime) {
+      setError('End time must be after start time.');
+      return;
+    }
+
     try {
-      // Submit booking request
-      await createBooking({
-        title,
-        description,
-        date,
-        startTime,
-        endTime,
-        termsAccepted,
-      });
-      navigate('/Thankyou');
+      await createBooking({ title, description, date, startTime, endTime, termsAccepted });
+      navigate('/Thankyou'); // Redirect to thank you page on success
     } catch (err) {
-      setError(err.response?.data?.message || 'Booking failed');
+      // Handle backend errors (e.g., overlap)
+      const backendMessage = err.response?.data?.message;
+      setError(backendMessage || 'Booking failed. Please try again.');
     }
   };
 
+  // Handler for "Accept & Close" button inside the modal
+  const handleAcceptTermsInModal = () => {
+    if (modalTermsAccepted) {
+      setTermsAccepted(true); // Automatically check the main form's checkbox
+      setShowTermsModal(false); // Close the modal
+      setModalError(''); // Clear any modal-specific error
+    } else {
+      setModalError('You must check the box to accept the terms.'); // Show error inside modal
+    }
+  };
+
+  // Handler for just "Close" button or clicking outside the modal
+  const handleCloseModal = () => {
+    setShowTermsModal(false);
+    setModalTermsAccepted(false); // Reset modal's checkbox state when closing without accepting
+    setModalError(''); // Clear any modal-specific error
+  };
+
   return (
-    <div className="mt-5">
-      <h3>Create Booking</h3>
+    <div className="container mt-5">
+      <h3>Create New Booking</h3>
       {error && <div className="alert alert-danger">{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Title</label>
-          <input
+
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3" controlId="formTitle">
+          <Form.Label>Title</Form.Label>
+          <Form.Control
             type="text"
-            className="form-control"
+            placeholder="Enter event title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
           />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Description</label>
-          <textarea
-            className="form-control"
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formDescription">
+          <Form.Label>Description (Optional)</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            placeholder="Describe your event"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Date</label>
-          <input
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formDate">
+          <Form.Label>Date</Form.Label>
+          <Form.Control
             type="date"
-            className="form-control"
             value={date}
             onChange={(e) => setDate(e.target.value)}
             required
           />
+        </Form.Group>
+
+        <div className="row mb-3">
+          <Form.Group as={Form.Col} controlId="formStartTime">
+            <Form.Label>Start Time</Form.Label>
+            <Form.Control
+              type="time"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group as={Form.Col} controlId="formEndTime">
+            <Form.Label>End Time</Form.Label>
+            <Form.Control
+              type="time"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+              required
+            />
+          </Form.Group>
         </div>
-        <div className="mb-3">
-          <label className="form-label">Start Time</label>
-          <input
-            type="time"
-            className="form-control"
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">End Time</label>
-          <input
-            type="time"
-            className="form-control"
-            value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
-            required
-          />
-        </div>
+
+        {/* This is the main form checkbox */}
         <div className="mb-3 form-check">
-          <input
+          <Form.Check
             type="checkbox"
-            className="form-check-input"
+            id="termsAccepted"
+            label={
+              <>
+                I accept the{' '}
+                <span
+                  className="text-primary"
+                  style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                  onClick={(e) => {
+                    // Prevent the checkbox itself from toggling when the text is clicked
+                    e.preventDefault();
+                    setShowTermsModal(true); // Open the modal
+                  }}
+                >
+                  terms and conditions
+                </span>
+              </>
+            }
             checked={termsAccepted}
-            onChange={(e) => setTermsAccepted(e.target.checked)}
-            required
+            onChange={(e) => setTermsAccepted(e.target.checked)} // Allows direct check/uncheck
+            required // Ensures HTML5 validation prevents submission if unchecked
           />
-          <label className="form-check-label">
-            I accept the terms and conditions
-          </label>
         </div>
-        <button type="submit" className="btn btn-primary">
+
+        <Button variant="primary" type="submit">
           Submit Booking
-        </button>
-      </form>
+        </Button>
+      </Form>
+
+      {/* Terms and Conditions Modal */}
+      <Modal show={showTermsModal} onHide={handleCloseModal} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Terms and Conditions for Hall Booking</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {/* Render the HTML content of terms */}
+          <div dangerouslySetInnerHTML={{ __html: TERMS_AND_CONDITIONS_CONTENT }} />
+          <hr className="my-3" />
+
+          {/* Checkbox inside the modal */}
+          <Form.Check
+            type="checkbox"
+            id="modalTermsAccepted"
+            label="I have read and agree to the terms and conditions."
+            checked={modalTermsAccepted}
+            onChange={(e) => setModalTermsAccepted(e.target.checked)}
+            className="mt-3"
+          />
+          {modalError && <div className="alert alert-danger mt-2">{modalError}</div>}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleAcceptTermsInModal}
+            // disabled={!modalTermsAccepted} // Optional: disable button if modalTermsAccepted is false
+          >
+            Accept & Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

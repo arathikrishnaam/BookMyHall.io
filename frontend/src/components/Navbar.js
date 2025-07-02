@@ -26,11 +26,16 @@ const Navbar = ({ isAuthenticated, userRole, onLogout }) => {
               <Link className="nav-link" to="/">Calendar</Link>
             </li>
 
+            {/* Always visible: Terms and Conditions (NEW) */}
+            <li className="nav-item">
+              <Link className="nav-link" to="/terms">Terms & Conditions</Link>
+            </li>
+
             {isAuthenticated ? (
               // Links for logged-in users
               <>
                 {/* Booking link: Visible if authenticated AND NOT an admin */}
-                {userRole !== 'admin' && ( // <-- NEW CONDITION HERE
+                {userRole !== 'admin' && (
                   <li className="nav-item">
                     <Link className="nav-link" to="/booking">Book</Link>
                   </li>
@@ -41,14 +46,21 @@ const Navbar = ({ isAuthenticated, userRole, onLogout }) => {
                     <Link className="nav-link" to="/admin">Admin Panel</Link>
                   </li>
                 )}
-                <li className="nav-item">
-                  <button className="nav-link btn btn-link text-white" onClick={handleLogoutClick} style={{ textDecoration: 'none', border: 'none', background: 'none' }}>
-                    Logout
-                  </button>
-                </li>
               </>
             ) : (
               // Links for logged-out users
+              null // No specific left-aligned links needed here if public links are always present
+            )}
+          </ul>
+          {/* Right-aligned links for Auth */}
+          <ul className="navbar-nav ms-auto"> {/* Use ms-auto to push to right */}
+            {isAuthenticated ? (
+              <li className="nav-item">
+                <button className="nav-link btn btn-link text-white" onClick={handleLogoutClick} style={{ textDecoration: 'none', border: 'none', background: 'none' }}>
+                  Logout
+                </button>
+              </li>
+            ) : (
               <>
                 <li className="nav-item">
                   <Link className="nav-link" to="/login">Login</Link>

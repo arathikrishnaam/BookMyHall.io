@@ -1,107 +1,104 @@
-// src/App.js
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { jwtDecode } from 'jwt-decode'; // For decoding JWT tokens
 import { useEffect, useState } from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
-// Import all your components
-import AdminPanel from './components/AdminPanel';
-import BookingForm from './components/BookingForm';
-import Login from './components/Login';
-import Navbar from './components/Navbar';
-import ProtectedRoute from './components/ProtectedRoute';
-import PublicCalendar from './components/PublicCalendar';
-import Signup from './components/Signup';
-import ThankYou from './components/Thankyou';
+// Import Bootstrap CSS (make sure this is in your main entry file, e.g., index.js)
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const App = () => {
+// Import your components and pages
+import AdminPanel from './components/AdminPanel'; // Your Admin Panel component
+import BookingForm from './components/BookingForm'; // Your Booking form component
+import Login from './components/Login'; // Your Login component
+import Navbar from './components/Navbar'; // Assuming you have a Navbar component
+import ProtectedRoute from './components/ProtectedRoute'; // Your ProtectedRoute component
+import PublicCalendar from './components/PublicCalendar'; // Your Public Calendar component
+import Signup from './components/Signup'; // Your Signup component
+import ThankYouPage from './components/Thankyou'; // Your ThankYou page component (assuming this name)
+import TermsAndConditionsPage from './pages/TermsAndConditionsPage'; // The new Terms and Conditions page
+
+function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');
-    // Debugging Logs
-    console.log('App.js useEffect - Initial Check - Token:', token ? 'Exists' : 'Missing', 'Role:', role);
-    if (token) {
-      setIsAuthenticated(true);
-      setUserRole(role);
-    }
-  }, []);
-
-  const handleLoginSuccess = (token, role) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('role', role);
+  // Function to handle successful login/signup
+  const handleAuthSuccess = (token, role) => {
+    localStorage.setItem('token', token); // Store token in localStorage
     setIsAuthenticated(true);
     setUserRole(role);
-    // Debugging Log
-    console.log('App.js - handleLoginSuccess called. Authenticated:', true, 'Role set to:', role);
   };
 
+  // Function to handle logout
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
+    localStorage.removeItem('token'); // Remove token from localStorage
     setIsAuthenticated(false);
     setUserRole(null);
+    // Optionally navigate to login page or home page after logout
+    // You might need to use a hook or context for navigation outside Router context directly
   };
 
-  // Debugging Log
-  console.log('App.js rendering - Navbar props: isAuthenticated =', isAuthenticated, ', userRole =', userRole);
+  // Check for existing token on component mount
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        // Check if token is expired (optional, but good practice)
+        const currentTime = Date.now() / 1000; // in seconds
+        if (decodedToken.exp < currentTime) {
+          handleLogout(); // Token expired, log out
+        } else {
+          setIsAuthenticated(true);
+          setUserRole(decodedToken.role ? decodedToken.role.toLowerCase().trim() : null);
+        }
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        handleLogout(); // Invalid token, log out
+      }
+    }
+  }, []); // Run only once on mount
 
   return (
     <Router>
+      {/* Navbar is typically outside the Routes so it appears on all pages */}
       <Navbar isAuthenticated={isAuthenticated} userRole={userRole} onLogout={handleLogout} />
-      <div className="container">
+
+      <div className="container mt-4"> {/* Add a container for consistent spacing */}
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<PublicCalendar />} />
-          <Route path="/public-calendar" element={<PublicCalendar />} />
-          <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
-          <Route path="/signup" element={<Signup onSignupSuccess={handleLoginSuccess} />} />
-          <Route path="/Thankyou" element={<ThankYou />} />
+          <Route path="/" element={<PublicCalendar />} /> {/* Home page, showing public calendar */}
+          <Route path="/login" element={<Login onLoginSuccess={handleAuthSuccess} />} />
+          <Route path="/signup" element={<Signup onSignupSuccess={handleAuthSuccess} />} />
+          <Route path="/terms" element={<TermsAndConditionsPage />} /> {/* New Terms Page */}
+          <Route path="/thankyou" element={<ThankYouPage />} /> {/* Thank You Page */}
+
 
           {/* Protected Routes */}
-          {/* Booking Page - requires any user to be logged in AND NOT an admin */}
+          {/* Booking Form - accessible by club_leader or faculty */}
           <Route
             path="/booking"
             element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
-                {userRole !== 'admin' ? ( // <-- NEW CONDITION HERE: Only for non-admin users
-                  <BookingForm />
-                ) : (
-                  // If admin, show unauthorized message or redirect
-                  <div className="alert alert-warning mt-5">
-                    <h3>Access Denied</h3>
-                    <p>Administrators do not need to make bookings. Please navigate to the Admin Panel.</p>
-                  </div>
-                )}
+              <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['club_leader', 'faculty']}>
+                <BookingForm />
               </ProtectedRoute>
             }
           />
 
-          {/* Admin Panel - requires user to be logged in AND have 'admin' role */}
+          {/* Admin Panel - accessible by admin only */}
           <Route
             path="/admin"
             element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
-                {userRole === 'admin' ? (
-                  <AdminPanel />
-                ) : (
-                  // If not admin, show unauthorized message or redirect
-                  <div className="alert alert-warning mt-5">
-                    <h3>Access Denied</h3>
-                    <p>You must be an administrator to view this page.</p>
-                  </div>
-                )}
+              <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['admin']}>
+                <AdminPanel />
               </ProtectedRoute>
             }
           />
 
-          {/* Fallback route for unmatched paths */}
-          <Route path="*" element={<h3>404 - Page Not Found</h3>} />
+          {/* Fallback for unknown routes */}
+          <Route path="*" element={<h3>404: Page Not Found</h3>} />
         </Routes>
       </div>
     </Router>
   );
-};
+}
 
 export default App;
