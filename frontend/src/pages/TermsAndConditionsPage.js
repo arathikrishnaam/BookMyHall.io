@@ -1,9 +1,12 @@
-import { TERMS_AND_CONDITIONS_CONTENT } from '../constants/termsAndConditions';
+import './Termsandcondition.css';
+import { TERMS_AND_CONDITIONS_CONTENT } from '../constants/TermsAndConditions';
 
 const TermsAndConditionsPage = () => {
   return (
     // The main container div for the page (Bootstrap's .container)
-    <div className="container mt-5">
+    <div className="terms-wrapper container mt-5">
+    <h2 className="terms-heading">Terms and Conditions for Seminar Hall Booking</h2>
+
       {/*
         The <form> tag is used here as a workaround to hide the global banner/footer
         due to your index.css's ":has(form)" rule.

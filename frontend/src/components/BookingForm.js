@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'; // Assuming you use react-router
 import { createBooking } from '../api'; // Your API service for booking
 
 // Import the terms content from the new dedicated file
-import { TERMS_AND_CONDITIONS_CONTENT } from '../constants/termsAndConditions'; // Adjust path if your 'constants' folder is elsewhere
+import { TERMS_AND_CONDITIONS_CONTENT } from '../constants/TermsAndConditions'; // Adjust path if your 'constants' folder is elsewhere
 
 const BookingForm = () => {
   const [title, setTitle] = useState('');

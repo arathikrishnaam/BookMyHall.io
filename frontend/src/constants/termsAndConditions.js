@@ -1,5 +1,4 @@
 export const TERMS_AND_CONDITIONS_CONTENT = `
-  <h2>Terms and Conditions for Seminar Hall Booking</h2>
   <p>Please read these Terms and Conditions carefully before submitting your booking request for the college hall. By proceeding with a booking, you acknowledge that you have read, understood, and agree to be bound by these terms.</p>
 
   <h3><strong>1. General Booking Conditions</strong></h3>
