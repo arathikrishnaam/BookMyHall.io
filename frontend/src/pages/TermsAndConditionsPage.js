@@ -1,5 +1,12 @@
+/*
 import './Termsandcondition.css';
 import { TERMS_AND_CONDITIONS_CONTENT } from '../constants/TermsAndConditions';
+*/
+import { TERMS_AND_CONDITIONS_CONTENT } from '../constants/termsAndConditions';
+// ✅ lowercase 't' and 'a'
+import './TermsAndConditions.css';
+
+ // ✅ Capital 'A' and 'C'
 
 const TermsAndConditionsPage = () => {
   return (

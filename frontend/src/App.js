@@ -12,9 +12,13 @@ import Login from './components/Login'; // Your Login component
 import Navbar from './components/Navbar'; // Assuming you have a Navbar component
 import ProtectedRoute from './components/ProtectedRoute'; // Your ProtectedRoute component
 import PublicCalendar from './components/PublicCalendar'; // Your Public Calendar component
-import Signup from './components/Signup'; // Your Signup component
+import Signup from './components/Signup'; // Your Signup component (now the frontend component)
 import ThankYouPage from './components/Thankyou'; // Your ThankYou page component (assuming this name)
+// Removed: import PendingApprovalPage from './components/PendingApprovalPage';
+import UserApprovalPanel from './components/UserApprovalPanel'; // New: Admin user approval panel
+
 import TermsAndConditionsPage from './pages/TermsAndConditionsPage'; // The new Terms and Conditions page
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -48,6 +52,7 @@ function App() {
           handleLogout(); // Token expired, log out
         } else {
           setIsAuthenticated(true);
+          // Ensure role is normalized to lowercase and trimmed
           setUserRole(decodedToken.role ? decodedToken.role.toLowerCase().trim() : null);
         }
       } catch (error) {
@@ -70,7 +75,7 @@ function App() {
           <Route path="/signup" element={<Signup onSignupSuccess={handleAuthSuccess} />} />
           <Route path="/terms" element={<TermsAndConditionsPage />} /> {/* New Terms Page */}
           <Route path="/thankyou" element={<ThankYouPage />} /> {/* Thank You Page */}
-
+          {/* Removed: <Route path="/pending-approval" element={<PendingApprovalPage />} /> */}
 
           {/* Protected Routes */}
           {/* Booking Form - accessible by club_leader or faculty */}
@@ -93,6 +98,16 @@ function App() {
             }
           />
 
+          {/* New: User Approval Panel - accessible by admin only */}
+          <Route
+            path="/admin/approvals"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['admin']}>
+                <UserApprovalPanel />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Fallback for unknown routes */}
           <Route path="*" element={<h3>404: Page Not Found</h3>} />
         </Routes>
@@ -102,3 +117,4 @@ function App() {
 }
 
 export default App;
+

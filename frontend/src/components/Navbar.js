@@ -40,11 +40,17 @@ const Navbar = ({ isAuthenticated, userRole, onLogout }) => {
                     <Link className="nav-link" to="/booking">Book</Link>
                   </li>
                 )}
-                {/* Admin Panel link: Visible ONLY if authenticated AND has 'admin' role */}
+                {/* Admin Panel links: Visible ONLY if authenticated AND has 'admin' role */}
                 {userRole === 'admin' && (
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/admin">Admin Panel</Link>
-                  </li>
+                  <>
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/admin">Admin Panel</Link>
+                    </li>
+                    {/* THIS IS THE MISSING LINK FOR USER APPROVALS */}
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/admin/approvals">User Approvals</Link>
+                    </li>
+                  </>
                 )}
               </>
             ) : (
