@@ -151,9 +151,9 @@ const AdminPanel = () => {
           <thead>
             <tr>
               <th>ID</th>
+              <th>Club Name</th>
               <th>Title</th>
               <th>Requested By</th>
-              <th>Requester Email</th>
               <th>Date</th>
               <th>Time</th>
               <th>Status</th>
@@ -164,9 +164,9 @@ const AdminPanel = () => {
             {bookings.map((booking) => (
               <tr key={booking.id}>
                 <td>{booking.id}</td>
+                <td>{booking.club_name || 'N/A'}</td>
                 <td>{booking.title}</td>
                 <td>{booking.user_name}</td>
-                <td>{booking.user_email}</td>
                 <td>{new Date(booking.date).toLocaleDateString()}</td>
                 <td>
                   {booking.start_time ? booking.start_time.substring(0, 5) : 'N/A'} -

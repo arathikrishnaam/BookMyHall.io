@@ -1,3 +1,4 @@
+// src/components/BookingForm.js
 import { useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap components
 import { useNavigate } from 'react-router-dom'; // Assuming you use react-router-dom
@@ -8,6 +9,8 @@ import { TERMS_AND_CONDITIONS_CONTENT } from '../constants/termsAndConditions';
  // Adjust path if your 'constants' folder is elsewhere
 
 const BookingForm = () => {
+  // Added clubName state
+  const [clubName, setClubName] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
@@ -15,6 +18,7 @@ const BookingForm = () => {
   const [endTime, setEndTime] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false); // State for the main form checkbox
   const [error, setError] = useState('');
+  const [message, setMessage] = useState(''); // Added missing message state
 
   // States for the modal
   const [showTermsModal, setShowTermsModal] = useState(false); // Controls modal visibility
@@ -26,27 +30,52 @@ const BookingForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); // Clear previous errors
+    setMessage(''); // Clear previous messages
 
-    // Client-side validation: Check if terms are accepted before sending
-    if (!termsAccepted) {
-      setError('You must accept the terms and conditions to submit the booking.');
-      return; // Prevent form submission
-    }
-    if (!title || !date || !startTime || !endTime) {
-      setError('Please fill in all required fields: Title, Date, Start Time, End Time.');
+    // Client-side validation for required fields including new clubName
+    if (!clubName.trim() || !title.trim() || !date || !startTime || !endTime || !termsAccepted) {
+      setError('Please fill in all required fields and accept the terms and conditions.');
       return;
     }
 
-    // Basic time validation (more robust validation happens on the backend)
-    if (startTime && endTime && startTime >= endTime) {
-      setError('End time must be after start time.');
+    // Basic date/time validation (more robust validation happens on the backend)
+    // Convert to Date objects for comparison
+    const eventDateTimeStart = new Date(`${date}T${startTime}`);
+    const eventDateTimeEnd = new Date(`${date}T${endTime}`);
+
+    if (eventDateTimeStart >= eventDateTimeEnd) {
+      setError('End time must be after start time on the same day.');
       return;
+    }
+    // Also ensure the date is not in the past
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize today to start of day
+    if (eventDateTimeStart < today) {
+        setError('Booking date cannot be in the past.');
+        return;
     }
 
     try {
-      await createBooking({ title, description, date, startTime, endTime, termsAccepted });
-      navigate('/Thankyou'); // Redirect to thank you page on success
+      const bookingData = {
+        club_name: clubName, // Include new field
+        title,
+        description,
+        date,
+        startTime, // Use startTime and endTime as is, backend will parse
+        endTime,
+        termsAccepted,
+      };
+
+      console.log('Sending booking data:', bookingData); // Debug log
+
+      const response = await createBooking(bookingData);
+      console.log('Booking response:', response); // Debug log
+      
+      // Navigate to ThankYou page immediately after successful booking
+      navigate('/Thankyou');
+      
     } catch (err) {
+      console.error('Booking creation error:', err.response?.data || err.message || err);
       // Handle backend errors (e.g., overlap)
       const backendMessage = err.response?.data?.message;
       setError(backendMessage || 'Booking failed. Please try again.');
@@ -75,19 +104,34 @@ const BookingForm = () => {
     <div className="container mt-5">
       <h3>Create New Booking</h3>
       {error && <div className="alert alert-danger">{error}</div>}
+      {message && <div className="alert alert-success">{message}</div>}
 
       <Form onSubmit={handleSubmit}>
+        {/* NEW: Club or Organization Name - Made first field */}
+        <Form.Group className="mb-3" controlId="formClubName">
+          <Form.Label>Club or Organization Name <span className="text-danger">*</span></Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter club or organization name"
+            value={clubName}
+            onChange={(e) => setClubName(e.target.value)}
+            required // Made required
+          />
+        </Form.Group>
+
+        {/* Event Title */}
         <Form.Group className="mb-3" controlId="formTitle">
-          <Form.Label>Title</Form.Label>
+          <Form.Label>Event Title <span className="text-danger">*</span></Form.Label>
           <Form.Control
             type="text"
             placeholder="Enter event title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            required
+            required // Made required
           />
         </Form.Group>
 
+        {/* Description (Optional) */}
         <Form.Group className="mb-3" controlId="formDescription">
           <Form.Label>Description (Optional)</Form.Label>
           <Form.Control
@@ -99,34 +143,35 @@ const BookingForm = () => {
           />
         </Form.Group>
 
+        {/* Date */}
         <Form.Group className="mb-3" controlId="formDate">
-          <Form.Label>Date</Form.Label>
+          <Form.Label>Date <span className="text-danger">*</span></Form.Label>
           <Form.Control
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            required
+            required // Made required
           />
         </Form.Group>
 
         <div className="row mb-3">
           <Form.Group as={Form.Col} controlId="formStartTime">
-            <Form.Label>Start Time</Form.Label>
+            <Form.Label>Start Time <span className="text-danger">*</span></Form.Label>
             <Form.Control
               type="time"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
-              required
+              required // Made required
             />
           </Form.Group>
 
           <Form.Group as={Form.Col} controlId="formEndTime">
-            <Form.Label>End Time</Form.Label>
+            <Form.Label>End Time <span className="text-danger">*</span></Form.Label>
             <Form.Control
               type="time"
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
-              required
+              required // Made required
             />
           </Form.Group>
         </div>
@@ -149,7 +194,7 @@ const BookingForm = () => {
                   }}
                 >
                   terms and conditions
-                </span>
+                </span> <span className="text-danger">*</span>
               </>
             }
             checked={termsAccepted}
