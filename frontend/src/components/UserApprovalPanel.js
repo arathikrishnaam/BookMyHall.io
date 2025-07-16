@@ -1,32 +1,34 @@
 // src/components/UserApprovalPanel.js
 import { useEffect, useState } from 'react';
 // Corrected imports: these functions are now correctly exported from '../api'
-import { approveUser, getPendingUsers, rejectUser } from '../api';
+// Assuming you'll add getAllUsers to your api.js file
+import { approveUser, getAllUsers, rejectUser } from '../api'; // Modified import
 
 const UserApprovalPanel = () => {
-  const [pendingUsers, setPendingUsers] = useState([]);
+  const [users, setUsers] = useState([]); // Changed from pendingUsers to users
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
 
-  // Function to fetch pending users
-  const fetchPendingUsers = async () => {
+  // Function to fetch all users (pending, approved, rejected)
+  const fetchAllUsers = async () => { // Renamed function
     setLoading(true);
     setError('');
     setMessage('');
     try {
-      const response = await getPendingUsers();
-      setPendingUsers(response.data);
+      // Assuming getAllUsers API call returns all users with their status
+      const response = await getAllUsers();
+      setUsers(response.data); // Set all users
     } catch (err) {
-      console.error('Error fetching pending users:', err.response?.data || err.message);
-      setError('Failed to load pending users.');
+      console.error('Error fetching users:', err.response?.data || err.message);
+      setError('Failed to load users.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchPendingUsers();
+    fetchAllUsers(); // Call the new fetchAllUsers
   }, []);
 
   // Handle Approve action
@@ -36,8 +38,12 @@ const UserApprovalPanel = () => {
     try {
       await approveUser(userId);
       setMessage('User approved successfully!');
-      // Remove the approved user from the list
-      setPendingUsers(pendingUsers.filter(user => user.id !== userId));
+      // Update the status of the approved user in the state
+      setUsers(prevUsers =>
+        prevUsers.map(user =>
+          user.id === userId ? { ...user, status: 'approved' } : user
+        )
+      );
     } catch (err) {
       console.error('Error approving user:', err.response?.data || err.message);
       setError('Failed to approve user.');
@@ -51,8 +57,12 @@ const UserApprovalPanel = () => {
     try {
       await rejectUser(userId);
       setMessage('User rejected successfully!');
-      // Remove the rejected user from the list
-      setPendingUsers(pendingUsers.filter(user => user.id !== userId));
+      // Update the status of the rejected user in the state
+      setUsers(prevUsers =>
+        prevUsers.map(user =>
+          user.id === userId ? { ...user, status: 'rejected' } : user
+        )
+      );
     } catch (err) {
       console.error('Error rejecting user:', err.response?.data || err.message);
       setError('Failed to reject user.');
@@ -60,7 +70,7 @@ const UserApprovalPanel = () => {
   };
 
   if (loading) {
-    return <div className="text-center mt-5">Loading pending users...</div>;
+    return <div className="text-center mt-5">Loading users...</div>;
   }
 
   if (error) {
@@ -71,8 +81,8 @@ const UserApprovalPanel = () => {
     <div className="mt-5">
       <h3>User Approval Requests</h3>
       {message && <div className="alert alert-success">{message}</div>}
-      {pendingUsers.length === 0 ? (
-        <div className="alert alert-info">No pending user registrations at this time.</div>
+      {users.length === 0 ? (
+        <div className="alert alert-info">No user registrations to display.</div>
       ) : (
         <table className="table table-striped table-hover">
           <thead>
@@ -81,29 +91,37 @@ const UserApprovalPanel = () => {
               <th>Name</th>
               <th>Email</th>
               <th>Requested Role</th>
-              <th>Actions</th>
+              <th>Actions / Status</th> {/* Changed column header */}
             </tr>
           </thead>
           <tbody>
-            {pendingUsers.map((user) => (
+            {users.map((user) => (
               <tr key={user.id}>
                 <td>{user.id}</td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
-                <td>{user.role}</td> {/* This will be 'faculty' for non-pre-approved users */}
+                <td>{user.role}</td>
                 <td>
-                  <button
-                    className="btn btn-success btn-sm me-2"
-                    onClick={() => handleApprove(user.id)}
-                  >
-                    Approve
-                  </button>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => handleReject(user.id)}
-                  >
-                    Reject
-                  </button>
+                  {user.status === 'pending' ? ( // Conditionally render buttons or status
+                    <>
+                      <button
+                        className="btn btn-success btn-sm me-2"
+                        onClick={() => handleApprove(user.id)}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleReject(user.id)}
+                      >
+                        Reject
+                      </button>
+                    </>
+                  ) : (
+                    <span className={`badge ${user.status === 'approved' ? 'bg-success' : 'bg-danger'}`}>
+                      {user.status.charAt(0).toUpperCase() + user.status.slice(1)} {/* Capitalize status */}
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}
@@ -115,4 +133,3 @@ const UserApprovalPanel = () => {
 };
 
 export default UserApprovalPanel;
-

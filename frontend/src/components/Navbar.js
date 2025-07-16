@@ -44,11 +44,11 @@ const Navbar = ({ isAuthenticated, userRole, onLogout }) => {
                 {userRole === 'admin' && (
                   <>
                     <li className="nav-item">
-                      <Link className="nav-link" to="/admin">Admin Panel</Link>
+                      <Link className="nav-link" to="/admin">Bookings Approval</Link>
                     </li>
                     {/* THIS IS THE MISSING LINK FOR USER APPROVALS */}
                     <li className="nav-item">
-                      <Link className="nav-link" to="/admin/approvals">User Approvals</Link>
+                      <Link className="nav-link" to="/admin/approvals">User Approval</Link>
                     </li>
                   </>
                 )}
