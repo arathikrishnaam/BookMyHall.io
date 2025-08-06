@@ -369,3 +369,222 @@ form h3 {
     text-align: center;
   }
 }
+
+/* ===== Admin Panel Container ===== */
+.mt-5 {
+  max-width: 95%;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-left: 12px solid #FA8128;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* ===== Title ===== */
+.mt-5 h3 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #00008B;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #00008B;
+  padding-bottom: 10px;
+}
+
+/* ===== Alerts ===== */
+.alert {
+  font-size: 0.95rem;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.alert-danger {
+  background-color: #ffe5e5;
+  color: #b10000;
+}
+
+.alert-success {
+  background-color: #e9ffe6;
+  color: #1a8b3c;
+}
+
+.alert-info {
+  background-color: #e6f0ff;
+  color: #004085;
+}
+
+/* ===== Table Styling ===== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 0.95rem;
+}
+
+.table thead {
+  background-color: #00008B;
+  color: white;
+}
+
+.table th, .table td {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+/* ===== Badge Styles ===== */
+.badge {
+  padding: 0.5em 0.75em;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.bg-success {
+  background-color: #28a745 !important;
+  color: white;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important;
+  color: white;
+}
+
+.bg-warning {
+  background-color: #ffc107 !important;
+  color: #212529;
+}
+
+/* ===== Button Styles ===== */
+.btn {
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+  border: none;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.me-2 {
+  margin-right: 0.5rem;
+}
+
+.d-flex {
+  display: flex;
+  gap: 10px;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+/* ===== Loading Text ===== */
+.text-center {
+  text-align: center;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.mt-5.text-center {
+  margin-top: 3rem;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+/* ===== Fade In Animation ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Mobile Responsive Table (NO JS EDITS) ===== */
+@media (max-width: 768px) {
+  .table {
+    border: 0;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tr {
+    display: block;
+    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    padding: 1rem;
+  }
+
+  .table td {
+    display: block;
+    text-align: right;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+    padding-left: 50%;
+    min-height: 40px;
+  }
+
+  .table td:last-child {
+    border-bottom: 0;
+  }
+
+  .table td::before {
+    content: attr(aria-label);
+    position: absolute;
+    left: 1rem;
+    top: 0.9rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    color: #555;
+  }
+}

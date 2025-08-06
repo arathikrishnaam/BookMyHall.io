@@ -140,7 +140,7 @@ const AdminPanel = () => {
 
   return (
     <div className="mt-5">
-      <h3>Admin Panel - All Bookings</h3>
+      <h3>Bookings Approval</h3>
       {error && <div className="alert alert-danger">{error}</div>}
       {message && <div className="alert alert-success">{message}</div>}
 
