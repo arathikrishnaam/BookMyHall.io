@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Base URL for your backend API
-const API_BASE_URL = 'https://bookmyhall-io.onrender.com'; // Assuming your Express routes are mounted under /api
+const API_BASE_URL = 'https://bookmyhall-io.onrender.com/api'; // Assuming your Express routes are mounted under /api
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
