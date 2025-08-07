@@ -289,7 +289,7 @@ router.get('/insert-temp-admin', async (req, res) => {
         1,
         'CGPU',
         'seminarhall.lbs@gmail.com',
-        'lbsseminarhall',
+        ' $2b$10$wWo1S2gFxdtuQctG/6ExFeyIA/TrF9c2yM6rZ16ypPRJXIV073eY2',
         'admin',
         'approved',
         '2025-07-16 20:57:03.907085+05:30'
