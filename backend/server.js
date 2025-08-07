@@ -3,7 +3,7 @@ const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const yaml = require('yamljs');
 const dotenv = require('dotenv');
-require('./migrate'); // 👈 Runs the migration when the server starts
+
 
 // Load environment variables from .env
 dotenv.config();
