@@ -278,4 +278,29 @@ router.get('/bookings/:id', async (req, res) => {
   }
 });
 
+
+// 🚨 TEMPORARY ROUTE: Insert a single admin user into 'users' table
+// Access via: GET /api/admin/insert-temp-admin
+router.get('/insert-temp-admin', async (req, res) => {
+  try {
+    await pool.query(`
+      INSERT INTO users (id, name, email, password, role, approval_status, created_at)
+      VALUES (
+        1,
+        'CGPU',
+        'seminarhall.lbs@gmail.com',
+        '$2b$10$wWo1S2gFxdtuQctG/6ExFeyIA/TrF9c2yM6rZ16ypPRJXIV073eY2',
+        'admin',
+        'approved',
+        '2025-07-16 20:57:03.907085+05:30'
+      )
+      ON CONFLICT (id) DO NOTHING;
+    `);
+    res.send('✅ Temporary admin user inserted.');
+  } catch (error) {
+    console.error('❌ Error inserting admin user:', error.message);
+    res.status(500).send('Failed to insert admin user.');
+  }
+});
+
 module.exports = router;
