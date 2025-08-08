@@ -1,6 +1,5 @@
-// createAdmin.js
 const bcrypt = require('bcrypt');
-const pool = require('./config/db'); // adjust path if needed
+const pool = require('./config/db');
 
 const createOrUpdateAdmin = async () => {
   const name = 'CGPU';
@@ -12,20 +11,35 @@ const createOrUpdateAdmin = async () => {
   try {
     const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
-    const result = await pool.query(
-      `INSERT INTO users (name, email, password, role, status)
-       VALUES ($1, $2, $3, $4, $5)
-       ON CONFLICT (email)
-       DO UPDATE SET password = EXCLUDED.password, role = EXCLUDED.role, status = EXCLUDED.status
-       RETURNING *`,
-      [name, email, hashedPassword, role, status]
+    const existing = await pool.query(
+      'SELECT * FROM users WHERE email = $1',
+      [email]
     );
 
-    console.log('✅ Admin created/updated:', result.rows[0]);
+    if (existing.rows.length > 0) {
+      // Update existing admin
+      const updated = await pool.query(
+        `UPDATE users 
+         SET password = $1, name = $2, role = $3, status = $4
+         WHERE email = $5
+         RETURNING *`,
+        [hashedPassword, name, role, status, email]
+      );
+      console.log('✅ Admin updated:', updated.rows[0]);
+    } else {
+      // Create new admin
+      const created = await pool.query(
+        `INSERT INTO users (name, email, password, role, status)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING *`,
+        [name, email, hashedPassword, role, status]
+      );
+      console.log('✅ Admin created:', created.rows[0]);
+    }
   } catch (err) {
     console.error('❌ Error inserting/updating admin:', err.message);
   } finally {
-    await pool.end(); // close DB connection
+    pool.end();
   }
 };
 
