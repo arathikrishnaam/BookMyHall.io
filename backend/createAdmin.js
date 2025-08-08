@@ -39,9 +39,11 @@ const createOrUpdateAdmin = async () => {
     }
   } catch (err) {
     console.error('❌ Error inserting/updating admin:', err.message);
-  } finally {
-    pool.end();
+  } /*
+  finally {
+    #pool.end();
   }
+    */
 };
 
 module.exports = createOrUpdateAdmin;
