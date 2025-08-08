@@ -1,3 +1,4 @@
+// createAdmin.js
 const bcrypt = require('bcrypt');
 const pool = require('./config/db');
 
@@ -43,4 +44,4 @@ const createOrUpdateAdmin = async () => {
   }
 };
 
-createOrUpdateAdmin();
+module.exports = createOrUpdateAdmin;
