@@ -31,8 +31,15 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
+// Check if the environment is production (e.g., on Render)
+const isProduction = process.env.NODE_ENV === 'production';
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  // Add this SSL configuration for Render
+  ssl: isProduction ? {
+    rejectUnauthorized: false
+  } : false, // Disable SSL for local dev
 });
 
 pool.connect()
