@@ -31,6 +31,7 @@ async function migrate() {
         admin_comments TEXT,
         terms_accepted BOOLEAN NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         club_name VARCHAR(255) NOT NULL DEFAULT 'N/A'
       );
     `);
@@ -39,8 +40,10 @@ async function migrate() {
   } catch (err) {
     console.error("Migration failed:", err);
   } finally {
-    await pool.end();
+    // This line is commented out to prevent the database pool from closing.
+    // await pool.end();
   }
 }
 
-migrate();
+// The function is commented out to prevent it from running automatically on server start.
+// migrate();
