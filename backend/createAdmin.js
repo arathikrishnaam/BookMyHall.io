@@ -1,34 +1,32 @@
 // createAdmin.js
 const bcrypt = require('bcrypt');
-const { pool } = require('./config/db'); // adjust path if db.js is elsewhere
+const pool = require('./config/db'); // adjust path if needed
 
-const createAdmin = async () => {
+const createOrUpdateAdmin = async () => {
   const name = 'CGPU';
   const email = 'seminarhall.lbs@gmail.com';
-  const plainPassword = 'lbsseminarhall'; // set the password you want
+  const plainPassword = 'lbsseminarhall';
   const role = 'admin';
   const status = 'approved';
 
   try {
-    // Hash the password
     const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
-    // Insert into users table
     const result = await pool.query(
       `INSERT INTO users (name, email, password, role, status)
        VALUES ($1, $2, $3, $4, $5)
-       RETURNING id, name, email, role, status`,
+       ON CONFLICT (email)
+       DO UPDATE SET password = EXCLUDED.password, role = EXCLUDED.role, status = EXCLUDED.status
+       RETURNING *`,
       [name, email, hashedPassword, role, status]
     );
 
-    console.log('✅ Admin created successfully:');
-    console.table(result.rows);
-    console.log(`\nYou can now log in with:\nEmail: ${email}\nPassword: ${plainPassword}`);
+    console.log('✅ Admin created/updated:', result.rows[0]);
   } catch (err) {
-    console.error('❌ Error inserting admin:', err.message);
+    console.error('❌ Error inserting/updating admin:', err.message);
   } finally {
-    pool.end(); // close DB connection
+    await pool.end(); // close DB connection
   }
 };
 
-createAdmin();
+createOrUpdateAdmin();
