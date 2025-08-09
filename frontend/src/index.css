@@ -5,6 +5,7 @@ body {
   font-family: 'Segoe UI', sans-serif;
   background-color: #f0f4ff;
   color: #333;
+  overflow-x: hidden; /* prevent horizontal scroll */
 }
 
 /* ===== NAVBAR Styling ===== */
@@ -15,6 +16,7 @@ body {
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  flex-direction: row;
 }
 
 .navbar-brand,
@@ -23,6 +25,7 @@ body {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-size: 1rem;
 }
 
 .navbar-nav .nav-link:hover,
@@ -90,14 +93,15 @@ body {
 
 /* ===== Login Page Styling ===== */
 form {
-  max-width: 90%;
-  width: 420px;
-  margin: 60px auto;
-  padding: 2.5rem 2rem 3rem;
+  max-width: 420px;
+  width: 100%;
+  margin: 30px auto;
+  padding: 2rem 1.5rem 2.5rem;
   background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
   animation: fadeIn 0.6s ease-out forwards;
+  box-sizing: border-box;
 }
 
 @keyframes fadeIn {
@@ -137,6 +141,7 @@ form h3 {
   font-size: 1rem;
   margin-bottom: 20px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
 }
 
 .form-control:focus {
@@ -174,14 +179,15 @@ form h3 {
 
 /* ===== Booking Form ===== */
 .booking-form form {
-  max-width: 95%;
-  width: 700px;
+  max-width: 700px;
+  width: 100%;
   margin: 60px auto;
-  padding: 40px 30px;
+  padding: 30px 20px;
   background-color: #ffffff;
   border-radius: 20px;
   border-left: 10px solid #00008B;
   box-shadow: 0 10px 30px rgba(0, 0, 139, 0.1);
+  box-sizing: border-box;
 }
 
 .booking-form form h3 {
@@ -219,6 +225,7 @@ form h3 {
   overflow: hidden;
   background-color: white;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  font-size: 0.95rem;
 }
 
 .table thead {
@@ -231,7 +238,7 @@ form h3 {
   padding: 1rem;
   text-align: center;
   border-bottom: 1px solid #eee;
-  font-size: 0.95rem;
+  vertical-align: middle;
 }
 
 .table tbody tr:hover {
@@ -244,51 +251,75 @@ form h3 {
   border-radius: 6px;
   padding: 0.5rem 1rem;
   color: white;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-success {
   background-color: #28a745;
 }
 
+.btn-success:hover {
+  background-color: #218838;
+}
+
 .btn-danger {
   background-color: #dc3545;
 }
 
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
 /* ===== FullCalendar Styling ===== */
+
+/* Calendar container full width and horizontal scroll if needed */
+#calendar {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 auto;
+  padding: 0 8px;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+/* Wrap toolbar buttons on small screens */
+.fc-toolbar.fc-header-toolbar {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 5px;
+  padding-bottom: 10px;
+}
+
+/* Smaller buttons and font size */
+.fc-button {
+  margin: 3px 2px !important;
+  font-size: 0.85rem !important;
+  padding: 6px 10px !important;
+  border-radius: 6px !important;
+}
+
+/* Toolbar title centered and full width */
+.fc-toolbar-title {
+  font-size: 1.3rem !important;
+  margin: 10px 0 !important;
+  flex-basis: 100%;
+  text-align: center;
+  font-weight: 700;
+  color: #00008B;
+}
+
+/* Reduce padding inside calendar cells */
+.fc .fc-daygrid-day-frame {
+  padding: 5px !important;
+}
+
+/* Reduce event text size */
 .fc-event,
 .fc-event-dot {
-  background-color: #e63946 !important;
-  border: none !important;
-  color: #fff !important;
-  font-weight: 500;
-  border-radius: 6px !important;
-  padding: 2px 4px !important;
-}
-
-.fc-button {
-  background-color: #6495ED !important;
-  border: none !important;
-  color: white !important;
-  font-weight: 600;
-  padding: 5px 12px !important;
-  margin: 2px !important;
-  border-radius: 6px !important;
-  transition: all 0.3s ease;
-}
-
-.fc-button:hover {
-  background-color: #407fdd !important;
-}
-
-.fc-button-active {
-  background-color: #3a6fd8 !important;
-}
-
-.fc-toolbar-title {
-  color: #00008B;
-  font-weight: 700;
-  font-size: 1.5rem;
-  margin-top: 10px;
+  font-size: 0.75rem !important;
+  padding: 3px 5px !important;
 }
 
 /* ===== Thank You Page Styling ===== */
@@ -322,6 +353,7 @@ form h3 {
   font-size: 1rem;
   margin-top: 20px;
   transition: background-color 0.3s ease;
+  cursor: pointer;
 }
 
 .mt-5.text-center .btn:hover {
@@ -346,13 +378,33 @@ form h3 {
 }
 
 @media (max-width: 480px) {
+  .container::before {
+    height: 100px;
+    background-size: contain;
+  }
+
   form {
-    margin: 30px 15px;
-    padding: 1.8rem 1rem;
+    margin: 20px 10px;
+    padding: 1.5rem 1rem 2rem;
   }
 
   .booking-form form {
-    padding: 25px 15px;
+    padding: 20px 15px;
+  }
+
+  .navbar .btn {
+    margin: 10px 0;
+    width: 100%;
+  }
+
+  .navbar-brand,
+  .navbar-nav .nav-link {
+    font-size: 0.9rem;
+  }
+
+  .container::after {
+    font-size: 0.9rem;
+    padding: 8px 0;
   }
 
   .mt-5.text-center h2 {
@@ -362,11 +414,58 @@ form h3 {
   .mt-5.text-center p {
     font-size: 1.4rem;
   }
+  
+  /* ===== Calendar container responsiveness ===== */
+  #calendar {
+    padding: 0 5px;
+  }
 
-  .navbar .btn {
-    margin-top: 10px;
-    width: 100%;
-    text-align: center;
+  /* Buttons smaller on mobile */
+  .fc-button {
+    font-size: 0.8rem !important;
+    padding: 5px 8px !important;
+    margin: 2px 1px !important;
+  }
+
+  /* Center and size toolbar title */
+  .fc-toolbar-title {
+    font-size: 1.1rem !important;
+    margin: 8px 0 !important;
+  }
+
+  /* Shrink calendar cell padding */
+  .fc .fc-daygrid-day-frame {
+    padding: 3px !important;
+  }
+
+  /* Smaller event text */
+  .fc-event,
+  .fc-event-dot {
+    font-size: 0.7rem !important;
+    padding: 2px 4px !important;
+  }
+  
+  /* Terms and Conditions Box Fix */
+  .terms-container {
+    max-width: 100% !important;
+    padding: 15px 10px !important;
+    box-sizing: border-box;
+    font-size: 1rem;
+    line-height: 1.5;
+    overflow-wrap: break-word; /* prevent overflow on long words */
+  }
+
+  .terms-container h1,
+  .terms-container h2,
+  .terms-container h3 {
+    font-size: 1.3rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .terms-container ul,
+  .terms-container ol {
+    padding-left: 20px !important;
+    margin-bottom: 1rem !important;
   }
 }
 
@@ -471,26 +570,7 @@ form h3 {
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
   transition: background-color 0.3s ease;
-}
-
-.btn-success {
-  background-color: #28a745;
-  color: white;
-  border: none;
-}
-
-.btn-success:hover {
-  background-color: #218838;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-}
-
-.btn-danger:hover {
-  background-color: #c82333;
+  cursor: pointer;
 }
 
 .btn-secondary {
@@ -530,18 +610,6 @@ form h3 {
   text-align: center;
   font-weight: 500;
   font-size: 1rem;
-}
-
-/* ===== Fade In Animation ===== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* ===== Mobile Responsive Table (NO JS EDITS) ===== */
